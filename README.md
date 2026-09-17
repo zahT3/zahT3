@@ -7,7 +7,6 @@ My work is organized around one principle: repositories hold the durable context
 ## Selected work
 
 - [Falling Stars](https://github.com/zahT3/falling-stars) — an interactive 3D archive of 31,956 meteorite recoveries.
-- [DeFiLlama Notion Sync](https://github.com/zahT3/defillama-notion-sync) — a small data pipeline that turns on-chain economics into a practical research signal.
 
 ## How I work
 
