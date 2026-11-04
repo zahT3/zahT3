@@ -7,10 +7,11 @@
 <style>
 .l0 rect{fill:#fff;animation:on .25s ease-out both}
 .l1 rect{fill:#bcff2f;animation:on .25s ease-out both}
-.l0{opacity:.3;animation:lease 1.4s 2.6s linear both}
+.l0{opacity:.3;animation:lease 1.4s 2.6s linear both,morse 32.00s 6.0s step-end infinite}
 .l1{filter:url(#glow)}
 @keyframes on{from{fill-opacity:0}}
-/* The rented line flickers and fades; the insight line stays lit. */
+/* The rented line flickers and fades, then keeps stuttering in Morse; the insight line stays lit. */
+@keyframes morse{0.000%{opacity:1}2.344%{opacity:0.3}3.125%{opacity:1}3.906%{opacity:0.3}4.688%{opacity:1}5.469%{opacity:0.3}7.812%{opacity:1}8.594%{opacity:0.3}9.375%{opacity:1}11.719%{opacity:0.3}14.062%{opacity:1}16.406%{opacity:0.3}17.188%{opacity:1}17.969%{opacity:0.3}18.750%{opacity:1}21.094%{opacity:0.3}21.875%{opacity:1}24.219%{opacity:0.3}29.688%{opacity:1}30.469%{opacity:0.3}31.250%{opacity:1}33.594%{opacity:0.3}35.938%{opacity:1}38.281%{opacity:0.3}39.062%{opacity:1}39.844%{opacity:0.3}42.188%{opacity:1}44.531%{opacity:0.3}45.312%{opacity:1}46.094%{opacity:0.3}46.875%{opacity:1}47.656%{opacity:0.3}53.125%{opacity:1}55.469%{opacity:0.3}56.250%{opacity:1}57.031%{opacity:0.3}59.375%{opacity:1}60.156%{opacity:0.3}60.938%{opacity:1}61.719%{opacity:0.3}64.062%{opacity:1}66.406%{opacity:0.3}67.188%{opacity:1}69.531%{opacity:0.3}70.312%{opacity:1}71.094%{opacity:0.3}73.438%{opacity:1}74.219%{opacity:0.3}75.000%{opacity:1}75.781%{opacity:0.3}76.562%{opacity:1}77.344%{opacity:0.3}78.125%{opacity:1}78.906%{opacity:0.3}81.250%{opacity:1}83.594%{opacity:0.3}}
 @keyframes lease{0%{opacity:1}12%{opacity:.2}18%{opacity:1}30%{opacity:.15}36%{opacity:.9}100%{opacity:.3}}
 @media (prefers-reduced-motion:reduce){rect,g{animation:none!important}}
 </style>

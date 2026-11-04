@@ -1,0 +1,19 @@
+{
+  "layer": {
+    "n": 1,
+    "question": "The rented line keeps stuttering. It isn't broken. And whatever you see below, you only see half.",
+    "message": "Layer 1 is mine. Solve it, then write layer 2 for the next person.",
+    "salt": "9bddd758eab2ab8020e6a6e648e8ac60",
+    "hash": "b2da57daa14ff619178d2bad5b8a32a324353241b968a34ceae9e351f5bbce55",
+    "iterations": 200000,
+    "author": "zahT3",
+    "published": null,
+    "split": {
+      "light": "NOT FOR",
+      "dark": "RENT"
+    }
+  },
+  "solved": null,
+  "pending": null,
+  "history": []
+}

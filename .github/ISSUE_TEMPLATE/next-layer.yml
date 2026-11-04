@@ -1,0 +1,39 @@
+name: Write the next layer
+description: Only for the person who solved the current layer. Fill this in from https://zahT3.github.io/zahT3/ so your answer stays secret.
+title: "next layer"
+body:
+  - type: markdown
+    attributes:
+      value: Fill this form from https://zahT3.github.io/zahT3/ — the page hashes your answer in your browser. Do not type the answer anywhere here.
+  - type: input
+    id: layer
+    attributes:
+      label: Layer
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Your riddle, at most 280 characters. Plain text only.
+    validations:
+      required: true
+  - type: input
+    id: message
+    attributes:
+      label: Message
+      description: Optional note to whoever solves it, at most 140 characters.
+  - type: input
+    id: salt
+    attributes:
+      label: Salt
+      description: Filled in by the page. Do not edit.
+    validations:
+      required: true
+  - type: input
+    id: hash
+    attributes:
+      label: Hash
+      description: Filled in by the page. Do not edit.
+    validations:
+      required: true

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Insight relay · write the next layer</title>
+<style>
+  :root{color-scheme:dark;--lime:#bcff2f}
+  body{margin:0;background:#000;color:#e8e8e8;font:16px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  main{max-width:640px;margin:48px auto;padding:0 20px}
+  h1{font-size:20px;color:var(--lime);font-weight:500}
+  label{display:block;margin:20px 0 6px;color:#9a9a9a}
+  input,textarea{width:100%;box-sizing:border-box;background:#0d0d0d;color:#f2f2f2;border:1px solid #2a2a2a;border-radius:8px;padding:10px;font:inherit}
+  textarea{height:120px;resize:vertical}
+  small{color:#6b6b6b}
+  button{margin-top:24px;background:var(--lime);color:#000;border:0;border-radius:8px;padding:10px 18px;font:inherit;cursor:pointer}
+  button:disabled{opacity:.5;cursor:wait}
+  #out{margin-top:16px;color:#9a9a9a}
+</style>
+<main>
+  <h1>insight relay — write layer <span id="n">?</span></h1>
+  <p>You solved the last layer, so the next one is yours. Your answer is hashed here in your browser and never leaves this page; only the riddle, your message and the hash go into the GitHub issue.</p>
+  <label for="q">Riddle <small>(up to 280 characters, plain text)</small></label>
+  <textarea id="q" maxlength="280" required></textarea>
+  <label for="a">Answer <small>(case, spaces and punctuation are ignored)</small></label>
+  <input id="a" maxlength="200" autocomplete="off" required>
+  <small id="norm"></small>
+  <label for="m">Message for the next solver <small>(optional, up to 140 characters)</small></label>
+  <input id="m" maxlength="140">
+  <button id="go">Open the GitHub issue</button>
+  <p id="out"></p>
+</main>
+<script>
+// Must match normalize() and digest() in game/game.py.
+const ITERATIONS = 200000;
+const normalize = s => [...s.normalize("NFKC").toLowerCase()].filter(c => /[\p{L}\p{N}]/u.test(c)).join("");
+const hex = b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+async function digest(answer, salt) {
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(normalize(answer)), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({name: "PBKDF2", hash: "SHA-256", salt, iterations: ITERATIONS}, key, 256);
+  return hex(bits);
+}
+const layer = new URLSearchParams(location.search).get("layer") || "";
+document.getElementById("n").textContent = layer || "?";
+const $ = id => document.getElementById(id);
+$("a").addEventListener("input", () => { $("norm").textContent = $("a").value ? "compared as: " + normalize($("a").value) : ""; });
+$("go").addEventListener("click", async () => {
+  const q = $("q").value.trim(), a = $("a").value, m = $("m").value.trim();
+  if (!/^\d+$/.test(layer)) return $("out").textContent = "Open this page from the link the bot gave you.";
+  if (!q || !normalize(a)) return $("out").textContent = "Write a riddle and an answer.";
+  $("go").disabled = true; $("out").textContent = "Hashing…";
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const hash = await digest(a, salt);
+  const p = new URLSearchParams({template: "next-layer.yml", title: "layer " + layer, layer, question: q, message: m, salt: hex(salt), hash});
+  $("go").disabled = false; $("out").textContent = "Opening GitHub…";
+  location.href = "https://github.com/zahT3/zahT3/issues/new?" + p;
+});
+</script>
+</html>

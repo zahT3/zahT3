@@ -9,6 +9,7 @@ GLYPHS = {
     "N": ["10001", "11001", "10101", "10011", "10001", "10001", "10001"],
     "T": ["11111", "00100", "00100", "00100", "00100", "00100", "00100"],
     "E": ["11111", "10000", "10000", "11110", "10000", "10000", "11111"],
+    "F": ["11111", "10000", "10000", "11110", "10000", "10000", "10000"],
     "L": ["10000", "10000", "10000", "10000", "10000", "10000", "11111"],
     "G": ["01110", "10001", "10000", "10111", "10001", "10001", "01111"],
     "C": ["01110", "10001", "10000", "10000", "10000", "10001", "01110"],
@@ -20,6 +21,10 @@ GLYPHS = {
     ".": ["00", "00", "00", "00", "00", "11", "11"],
     " ": ["000"] * 7,
 }
+
+# Relay layer 1: after it fades, the rented line keeps stuttering this in Morse.
+MORSE_TEXT, MORSE_UNIT, MORSE_START = "DAY AND NIGHT", 0.25, 6.0
+MORSE = {"A": ".-", "D": "-..", "G": "--.", "H": "....", "I": "..", "N": "-.", "T": "-", "Y": "-.--"}
 
 PITCH, CELL = 12, 10
 PAD_X, PAD_Y, LINE_GAP = 4, 3, 4
@@ -33,6 +38,33 @@ def text_cells(text):
             cells += [(x + i, y) for i, bit in enumerate(row) if bit == "1"]
         x += len(rows[0]) + 1
     return cells, x - 1
+
+
+def morse_segments(text):
+    """(lit, units) runs: dot 1, dash 3, gap 1 inside a letter, 3 between letters, 7 between words."""
+    segs = []
+    for w, word in enumerate(text.split()):
+        if w:
+            segs.append((False, 7))
+        for c, ch in enumerate(word):
+            if c:
+                segs.append((False, 3))
+            for k, sym in enumerate(MORSE[ch]):
+                if k:
+                    segs.append((False, 1))
+                segs.append((True, 1 if sym == "." else 3))
+    segs.append((False, 21))  # a long dark pause marks where the message repeats
+    return segs
+
+
+def morse_keyframes(text):
+    segs = morse_segments(text)
+    total = sum(u for _, u in segs)
+    frames, at = [], 0
+    for lit, units in segs:
+        frames.append(f"{100 * at / total:.3f}%{{opacity:{1 if lit else .3}}}")
+        at += units
+    return "".join(frames), total * MORSE_UNIT
 
 
 def main():
@@ -58,6 +90,7 @@ def main():
             )
         groups.append(f'<g class="l{n}">{"".join(rects)}</g>')
 
+    morse, morse_dur = morse_keyframes(MORSE_TEXT)
     svg = f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" width="{width}" height="{height}" role="img" aria-label="{' '.join(LINES)}">
 <title>{' '.join(LINES).title()}</title>
 <defs>
@@ -67,10 +100,11 @@ def main():
 <style>
 .l0 rect{{fill:#fff;animation:on .25s ease-out both}}
 .l1 rect{{fill:#bcff2f;animation:on .25s ease-out both}}
-.l0{{opacity:.3;animation:lease 1.4s 2.6s linear both}}
+.l0{{opacity:.3;animation:lease 1.4s 2.6s linear both,morse {morse_dur:.2f}s {MORSE_START}s step-end infinite}}
 .l1{{filter:url(#glow)}}
 @keyframes on{{from{{fill-opacity:0}}}}
-/* The rented line flickers and fades; the insight line stays lit. */
+/* The rented line flickers and fades, then keeps stuttering in Morse; the insight line stays lit. */
+@keyframes morse{{{morse}}}
 @keyframes lease{{0%{{opacity:1}}12%{{opacity:.2}}18%{{opacity:1}}30%{{opacity:.15}}36%{{opacity:.9}}100%{{opacity:.3}}}}
 @media (prefers-reduced-motion:reduce){{rect,g{{animation:none!important}}}}
 </style>

@@ -1,0 +1,11 @@
+name: Answer the insight relay
+description: Submit an answer to the current layer. A bot replies within a minute.
+title: "answer"
+body:
+  - type: input
+    id: answer
+    attributes:
+      label: Answer
+      description: Case, spaces and punctuation are ignored. Wrong answers are closed automatically; try again any time. Your answer is public once submitted.
+    validations:
+      required: true
